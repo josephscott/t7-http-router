@@ -16,6 +16,7 @@ $_router = new T7\HTTP\Router(
 		[ '_404',  __DIR__ . '/404.php' ],
 		[ 'GET', '/', __DIR__ . '/home.php' ],
 		[ 'GET', '/hello/[{name}/]', __DIR__ . '/hello.php' ],
+		[ 'GET', '/json/[{thing}/]', __DIR__ . '/json.php' ],
 		[ 'GET', '/function/[{thing}/]', function ( $vars ) {
 			echo "<pre>\n";
 			print_r( $vars );
