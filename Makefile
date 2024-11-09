@@ -23,8 +23,12 @@ style: ## Fix any style issues
 lint: ## Check if the code is valid
 	@echo
 	@echo "--> Lint"
-	php -l src/t7/http/router.php
 	php -l src/t7/http/route-handler.php
+	php -l src/t7/http/router.php
+	php -l example/404.php
+	php -l example/hello.php
+	php -l example/home.php
+	php -l example/index.php
 	@echo
 
 .PHONY: analyze
