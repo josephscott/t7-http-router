@@ -42,21 +42,21 @@ analyze: ## Static analysis, catch problems in code
 tests: test-server ## Run tests against local PHP built-in server
 	@echo
 	@echo "--> Tests: Pest"
-	bash -c "./vendor/bin/pest || if pgrep -q -f 'localhost:17171 -t tests/server'; then pkill -f 'localhost:17171 -t tests/server'; fi"
+	bash -c "./vendor/bin/pest || if pgrep -q -f 'localhost:17171 -t example/'; then pkill -f 'localhost:17171 -t example/'; fi"
 	@echo
 	@echo "--> Test Server: stopping"
 	@echo
-	if pgrep -q -f 'localhost:17171 -t tests/server'; then pkill -f 'localhost:17171 -t tests/server'; fi
+	if pgrep -q -f 'localhost:17171 -t example/'; then pkill -f 'localhost:17171 -t example/'; fi
 
 .PHONY: test-server
 test-server: ## Use built-in PHP server in the background for testing
 	@echo
 	@echo "--> Test Server: cleaning up"
 	@echo
-	if pgrep -q -f 'localhost:17171 -t tests/server'; then pkill -f 'localhost:17171 -t tests/server'; fi
+	if pgrep -q -f 'localhost:17171 -t example/'; then pkill -f 'localhost:17171 -t example/'; fi
 	@echo
 	@echo "--> Test Server: starting"
 	@echo
-	{ php -S localhost:17171 -t tests/server/ > phpd.log 2>&1 & echo $$! > /tmp/t7-server-test-server.pid; }
+	{ php -S localhost:17171 -t example/ > phpd.log 2>&1 & echo $$! > /tmp/t7-server-test-server.pid; }
 	@echo "Test Server PID saved to /tmp/t7-server-test-server.pid"
 	@echo
