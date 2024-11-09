@@ -23,6 +23,23 @@ $_router = new T7\HTTP\Router(
 			echo "</pre>\n";
 		} ],
 		[ 'GET', '/speak/[{thing}/]', [ 'Speak', 'get' ] ],
+		[ 'POST', '/', function () {
+			header( 'Content-Type: text/html; charset=UTF-8' );
+
+			$response = [
+				'post' => $_POST,
+				'get' => $_GET,
+			];
+
+			// Add JSON data if content-type is application/json
+			if ( isset( $_SERVER['CONTENT_TYPE'] ) &&
+				strpos( $_SERVER['CONTENT_TYPE'], 'application/json' ) !== false ) {
+				$response['json'] = json_decode( file_get_contents( 'php://input' ), true );
+			}
+
+			echo json_encode( $response );
+			exit;
+		} ],
 	]
 );
 

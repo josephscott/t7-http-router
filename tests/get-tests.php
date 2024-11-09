@@ -35,7 +35,7 @@ test( 'get non-existent endpoint returns 404', function () {
 
 test( 'get with invalid host returns error', function () {
 	try {
-		$response = file_get_contents( 'http://invalid-host:17171' );
+		$response = @file_get_contents( 'http://invalid-host:17171' );
 		$this->fail( 'Expected exception was not thrown' );
 	} catch ( \Exception $e ) {
 		expect( $e )->toBeInstanceOf( \Exception::class );
@@ -50,7 +50,7 @@ test( 'get with timeout', function () {
 	] );
 
 	try {
-		$response = file_get_contents( 'http://localhost:17171/slow-endpoint', false, $ctx );
+		$response = @file_get_contents( 'http://localhost:17171/slow-endpoint', false, $ctx );
 		$this->fail( 'Expected timeout exception was not thrown' );
 	} catch ( \Exception $e ) {
 		expect( $e )->toBeInstanceOf( \Exception::class );
