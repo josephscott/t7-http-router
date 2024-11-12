@@ -2,57 +2,65 @@
 declare( strict_types = 1 );
 
 test( 'get', function () {
-	$response = file_get_contents( 'http://localhost:17171' );
-	$headers = parse_http_headers( $http_response_header );
+	$request = new \T7\HTTP\Request();
+	$response = $request->get(
+		url: 'http://localhost:17171'
+	);
 
-	expect( $headers['response_code'] )->toBe( 200 );
+	expect( $response->code )->toBe( 200 );
 } );
 
 test( 'get returns expected content type', function () {
-	$response = file_get_contents( 'http://localhost:17171' );
-	$headers = parse_http_headers( $http_response_header );
+	$request = new \T7\HTTP\Request();
+	$response = $request->get(
+		url: 'http://localhost:17171'
+	);
+	$data = json_decode( $response->body, true );
 
-	expect( $headers['content-type'] )->toBe( 'text/html; charset=UTF-8' );
+	expect( $response->headers['content-type'] )->toBe( 'text/html; charset=UTF-8' );
 } );
 
 test( 'get with query parameters', function () {
-	$response = file_get_contents( 'http://localhost:17171/json/?param=test' );
-	$headers = parse_http_headers( $http_response_header );
-	$data = json_decode( $response, true );
+	$request = new \T7\HTTP\Request();
+	$response = $request->get(
+		url: 'http://localhost:17171/json/?param=test'
+	);
+	$data = json_decode( $response->body, true );
 
-	expect( $headers['response_code'] )->toBe( 200 );
-
+	expect( $response->code )->toBe( 200 );
+	expect( $data )->not()->toBeNull();
+	expect( is_array( $data ) )->toBeTrue();
 	expect( $data )->toHaveKey( 'get' );
 	expect( $data['get'] )->toHaveKey( 'param' );
 	expect( $data['get']['param'] )->toBe( 'test' );
 } );
 
 test( 'get non-existent endpoint returns 404', function () {
-	$response = file_get_contents( 'http://localhost:17171/not-found/' );
-	$headers = parse_http_headers( $http_response_header );
-	expect( $headers['response_code'] )->toBe( 404 );
+	$request = new \T7\HTTP\Request();
+	$response = $request->get(
+		url: 'http://localhost:17171/not-found/'
+	);
+
+	expect( $response->code )->toBe( 404 );
 } );
 
 test( 'get with invalid host returns error', function () {
-	try {
-		$response = @file_get_contents( 'http://invalid-host:17171' );
-		$this->fail( 'Expected exception was not thrown' );
-	} catch ( \Exception $e ) {
-		expect( $e )->toBeInstanceOf( \Exception::class );
-	}
+	$request = new \T7\HTTP\Request();
+	$response = $request->get(
+		url: 'http://invalid-host:17171'
+	);
+
+	expect( $response->error )->toBe( true );
 } );
 
 test( 'get with timeout', function () {
-	$ctx = stream_context_create( [
-		'http' => [
-			'timeout' => 1, // 1 second timeout
-		],
-	] );
+	$request = new \T7\HTTP\Request();
+	$response = $request->get(
+		url: 'http://localhost:17171/json/?sleep=2',
+		options: [
+			'timeout' => 1,
+		]
+	);
 
-	try {
-		$response = @file_get_contents( 'http://localhost:17171/slow-endpoint', false, $ctx );
-		$this->fail( 'Expected timeout exception was not thrown' );
-	} catch ( \Exception $e ) {
-		expect( $e )->toBeInstanceOf( \Exception::class );
-	}
+	expect( $response->error )->toBe( true );
 } );
